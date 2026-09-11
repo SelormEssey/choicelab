@@ -1,6 +1,6 @@
 # ChoiceLab
 
-ChoiceLab is a graduate-level Human-Computer Interaction project exploring how intelligent financial interfaces can support human decision-making without replacing human judgment.
+ChoiceLab is a Human-Computer Interaction project exploring how intelligent financial interfaces can support human decision-making without replacing human judgment.
 
 The project is in an early research and development phase. It does not provide financial advice, recommendations, account connections, or automated decisions.
 
