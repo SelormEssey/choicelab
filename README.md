@@ -2,82 +2,125 @@
 
 ChoiceLab is a Human-Computer Interaction research platform for studying how AI recommendations, explanations, and confidence cues influence human decision-making and reliance.
 
-The core study is a local research prototype. It uses fictional software and resource-selection decisions, controlled experimental stimuli, anonymous sessions, and no external AI service.
+It is a controlled human-AI interaction prototype: participants complete fictional, low-risk decision tasks while the backend manages experimental assignment, stimuli, scoring, and anonymous study records. It is not a deployed research study and this repository contains no participant data, findings, or statistical claims.
 
-## Project focus
+![ChoiceLab landing page](docs/assets/choicelab-landing.png)
 
-Decision aids can influence what people select, trust, and rely on. ChoiceLab tests information presentation while keeping every scenario fictional and low risk.
+## Why ChoiceLab
 
-The current provisional research question is:
+AI interfaces often present recommendations, explanations, and confidence signals. Those choices can shape how much people trust an aid and whether they follow it. ChoiceLab provides a controlled environment for studying those effects while keeping the tasks fictional and the participant in charge of every decision.
 
-> How do AI recommendations, explanations, and confidence cues affect human decision-making and reliance?
+## Study Design
 
-No participants, findings, or statistical claims are represented in this repository.
+Each participant is assigned one of four conditions by the backend:
 
-## Core study
+| Condition           | Participant experience                     |
+| ------------------- | ------------------------------------------ |
+| `CONTROL`           | Decision task without an AI decision aid.  |
+| `AI_RECOMMENDATION` | Suggested option only.                     |
+| `AI_EXPLANATION`    | Suggested option with a short explanation. |
+| `AI_CONFIDENCE`     | Suggested option with a confidence cue.    |
 
-Participant flow: landing page → study introduction → consent → ten trials → post-study questionnaire → debrief. Participants may stop at any time; stopping permanently ends the session before debriefing.
+The study contains ten fictional software and resource-selection trials. Stimuli are versioned and controlled: each complementary schedule includes balanced correct and intentionally incorrect recommendations. Sessions are anonymous, and the backend owns condition assignment and scoring.
 
-The backend assigns one of four conditions: `CONTROL`, `AI_RECOMMENDATION`, `AI_EXPLANATION`, or `AI_CONFIDENCE`. Five recommendations per schedule are correct and five are intentionally incorrect. The browser never receives answer keys or recommendation-correctness fields before a response is saved.
+## Tech Stack
+
+| Area                | Technologies                                             |
+| ------------------- | -------------------------------------------------------- |
+| Frontend            | Next.js 16, React 19, TypeScript                         |
+| Backend             | FastAPI, Pydantic, Python, SQLite                        |
+| Testing and tooling | Pytest, Playwright, ESLint, Prettier, openapi-typescript |
+
+## Architecture
 
 ```text
-Next.js participant interface → FastAPI study service → SQLite
-                               ↓
-                 controlled, versioned study fixtures
+Next.js participant interface
+        ↓
+FastAPI study service ← controlled, versioned study fixtures
+        ↓                    ↑
+SQLite persistence ← backend-owned assignment and scoring
 ```
 
-SQLite is local, backend-owned prototype storage. Its repository boundary is designed for a later PostgreSQL replacement. The system requests no identity or contact data, does not use tracking, and does not call a live AI API.
+The browser receives the trial data needed to make a choice, but not answer keys or recommendation-correctness metadata. SQLite is accessed through a repository boundary so the persistence layer can later move to PostgreSQL if the study scope requires it.
 
-## Project status
+## Key Engineering Decisions
 
-| Area        | Current focus                                                                    |
-| ----------- | -------------------------------------------------------------------------------- |
-| Research    | Controlled human-AI reliance study protocol and data dictionary.                 |
-| Design      | Accessible participant decision flow with restrained condition presentation.     |
-| Development | Next.js participant experience, FastAPI study API, and local SQLite persistence. |
-| Evaluation  | Analysis-ready response data. Formal evaluation remains future work.             |
+- Server-side experimental-condition assignment prevents participants from selecting their own condition.
+- Answer keys and recommendation-correctness fields are redacted from trial responses sent to the browser.
+- Idempotency keys make response retries safe and prevent duplicate trial advancement.
+- Anonymous session records avoid names, contact details, IP addresses, and demographic identity fields.
+- Versioned fixtures and complementary schedules keep experimental stimuli deterministic and balanced.
+- Researcher summary access is explicitly gated and unavailable by default.
+- Semantic controls, visible focus, responsive layouts, and non-color-only cues support accessible participation.
 
-## Repository structure
+## Screenshots
 
-    apps/
+### AI-assisted trial
 
-web/ Next.js landing page and participant study routes
-api/ FastAPI study service and SQLite repository boundary
+![AI explanation condition on a fictional decision trial](docs/assets/choicelab-study-trial.png)
+
+### Participant debrief
+
+![ChoiceLab participant debrief](docs/assets/choicelab-debrief.png)
+
+## Repository Structure
+
+```text
+apps/
+├── web/                         Next.js participant experience
+│   ├── app/study/               Study routes
+│   └── components/study/        Participant-facing components
+└── api/                         FastAPI study service
+    ├── study/                   Assignment, fixtures, scoring, and persistence
+    └── tests/                   API and study-integrity tests
+
 docs/
-research/ Study protocol, data dictionary, and research framing
-design/ Design requirements and accessibility guidance
-evaluation/ Evaluation planning
+├── assets/                      README screenshots from the local application
+├── research/                    Study protocol, data dictionary, and ethics notes
+├── design/                      Design requirements and accessibility guidance
+└── evaluation/                  Evaluation planning
+```
 
-## Local development
+## Local Development
 
-### Web
+### Frontend
 
 Requirements: Node.js 20.9 or newer and npm.
 
-    npm install
-    npm run dev
+```bash
+npm install
+npm run dev
+```
 
-The landing page is served by Next.js at the local URL printed in the terminal.
+The participant interface is served by Next.js at the local URL printed in the terminal.
 
-### API
+### Backend
 
 Requirements: Python 3.10 or newer.
 
-    cd apps/api
-    python3 -m venv .venv
-    source .venv/bin/activate
-    pip install -r requirements.txt
-    uvicorn main:app --reload
+```bash
+cd apps/api
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
 
-The API preserves `GET /health` and `GET /v1/project-status`. Study routes live under `/v1/study/`.
+The API exposes `GET /health` and `GET /v1/project-status`. Study routes live under `/v1/study/`.
 
-### Researcher summary configuration
+## Researcher Summary Configuration
 
-`GET /v1/study/researcher-summary` is disabled by default and remains excluded from OpenAPI documentation. It returns a 404 unless a local researcher explicitly enables it before starting the API:
+`GET /v1/study/researcher-summary` is disabled by default and excluded from OpenAPI documentation. It returns a 404 unless a local researcher explicitly enables it before starting the API:
 
-    CHOICELAB_ENABLE_RESEARCHER_SUMMARY=true uvicorn main:app --reload
+```bash
+CHOICELAB_ENABLE_RESEARCHER_SUMMARY=true uvicorn main:app --reload
+```
 
-Recognized enabled values are `1`, `true`, `yes`, and `on`, case-insensitively. All other values, including an unset value, leave the endpoint unavailable. When enabled, it returns aggregate counts only; it is not intended as a public production endpoint.
+Recognized enabled values are `1`, `true`, `yes`, and `on`, case-insensitively. All other values, including an unset value, leave the endpoint unavailable. When enabled, it returns aggregate counts only and is not intended as a public production endpoint.
+
+## Research Integrity
+
+ChoiceLab will not represent assumptions as evidence. The repository does not contain fabricated participants, interview responses, survey data, usability results, or personas. Research findings will be added only when they are collected, analyzed, and documented.
 
 ## Roadmap
 
@@ -86,10 +129,6 @@ Recognized enabled values are `1`, `true`, `yes`, and `on`, case-insensitively. 
 3. Prepare PostgreSQL deployment only if the study scope requires it.
 4. Conduct a documented evaluation.
 5. Report findings, limitations, and design iterations responsibly.
-
-## Research integrity
-
-ChoiceLab will not represent assumptions as evidence. The repository does not contain fabricated participants, interview responses, survey data, usability results, or personas. Research findings will be added only when they are collected, analyzed, and documented.
 
 ## License
 
