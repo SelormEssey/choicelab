@@ -1,6 +1,6 @@
 # ChoiceLab
 
-ChoiceLab is a graduate-level Human-Computer Interaction research platform for studying how AI recommendations, explanations, and confidence cues influence human decision-making and reliance.
+ChoiceLab is a Human-Computer Interaction research platform for studying how AI recommendations, explanations, and confidence cues influence human decision-making and reliance.
 
 The core study is a local research prototype. It uses fictional software and resource-selection decisions, controlled experimental stimuli, anonymous sessions, and no external AI service.
 
