@@ -5,20 +5,30 @@ export default function Home() {
     <main>
       <header className="site-header">
         <a className="wordmark" href="#top" aria-label="ChoiceLab home">
-          <span className="wordmark-mark" aria-hidden="true">C</span>
+          <span className="wordmark-mark" aria-hidden="true">
+            C
+          </span>
           <span>ChoiceLab</span>
         </a>
-        <span className="status"><span aria-hidden="true" /> Research &amp; Development</span>
+        <span className="status">
+          <span aria-hidden="true" /> Research &amp; Development
+        </span>
       </header>
 
       <section className="hero" id="top" aria-labelledby="hero-title">
-        <p className="eyebrow">Human-centered financial decision support</p>
-        <h1 id="hero-title">Keep the judgment<br />with the person.</h1>
+        <p className="eyebrow">Human-AI decision research</p>
+        <h1 id="hero-title">
+          Keep the judgment
+          <br />
+          with the person.
+        </h1>
         <p className="hero-copy">
-          ChoiceLab explores how intelligent financial interfaces can help people understand tradeoffs
-          without replacing their judgment.
+          ChoiceLab explores how recommendations, explanations, and confidence cues shape human
+          judgment and reliance.
         </p>
-        <a className="scroll-cue" href="#problem">Explore the research <span aria-hidden="true">↓</span></a>
+        <a className="scroll-cue" href="/study">
+          Try the study <span aria-hidden="true">→</span>
+        </a>
       </section>
 
       <section className="problem section-rule" id="problem" aria-labelledby="problem-title">
@@ -29,11 +39,12 @@ export default function Home() {
         <div className="section-content">
           <h2 id="problem-title">A recommendation can be useful. It can also hide the decision.</h2>
           <p>
-            Financial decision-support systems often prioritize a single recommendation. ChoiceLab begins
-            from a different possibility: people may need support examining assumptions, consequences,
-            and tradeoffs before deciding what is right for them.
+            Decision aids can change how people evaluate options. ChoiceLab studies how
+            recommendation, explanation, and confidence cues influence choices, trust, and reliance.
           </p>
-          <p className="note">This is a framing for investigation, not a claim established by this project.</p>
+          <p className="note">
+            This is a framing for investigation, not a claim established by this project.
+          </p>
         </div>
       </section>
 
@@ -43,10 +54,12 @@ export default function Home() {
           <p>Provisional question</p>
         </div>
         <div className="section-content">
-          <p className="question-kicker">The research question will be refined after formative research.</p>
+          <p className="question-kicker">
+            The research question will be refined after formative research.
+          </p>
           <blockquote id="question-title">
-            How does reflection-first intelligent assistance affect users&apos; understanding, perceived agency,
-            and trust compared with recommendation-first assistance during financial decision-making?
+            How do AI recommendations, explanations, and confidence cues affect human
+            decision-making and reliance?
           </blockquote>
         </div>
       </section>
@@ -74,21 +87,31 @@ export default function Home() {
         </div>
         <div className="reflection-grid">
           <div>
-            <h2 id="reflection-title">Reflection first</h2>
+            <h2 id="reflection-title">Controlled decision aids</h2>
             <p>
-              Rather than starting with an answer, a reflection-first interaction could make the reasoning
-              visible: what matters, what changes across options, and which uncertainties remain.
+              The study uses reproducible decision-aid fixtures so each participant experiences an
+              intentional combination of recommendation, explanation, or confidence information.
             </p>
           </div>
           <div className="concept-card" aria-label="Illustrative reflection sequence">
-            <p className="concept-label">An early interaction direction</p>
+            <p className="concept-label">Study interaction</p>
             <ol>
-              <li><span>01</span> Name what matters in this decision</li>
-              <li><span>02</span> Examine a tradeoff</li>
-              <li><span>03</span> Compare possible consequences</li>
-              <li><span>04</span> Decide with context</li>
+              <li>
+                <span>01</span> Review a fictional scenario
+              </li>
+              <li>
+                <span>02</span> Compare available options
+              </li>
+              <li>
+                <span>03</span> Make an active choice
+              </li>
+              <li>
+                <span>04</span> Reflect on confidence
+              </li>
             </ol>
-            <p className="concept-footnote">A design hypothesis to examine through research.</p>
+            <p className="concept-footnote">
+              A research prototype with controlled experimental stimuli.
+            </p>
           </div>
         </div>
       </section>
@@ -96,10 +119,15 @@ export default function Home() {
       <section className="future section-rule" aria-labelledby="future-title">
         <div>
           <p className="eyebrow">Project status</p>
-          <h2 id="future-title">The Decision Lab is<br />coming later.</h2>
+          <h2 id="future-title">
+            The Decision Lab is
+            <br />
+            ready to explore.
+          </h2>
         </div>
-        <button type="button" disabled aria-describedby="future-note">In development</button>
-        <p id="future-note" className="sr-only">The Decision Lab is not available yet.</p>
+        <a className="button-link" href="/study">
+          Start the study
+        </a>
       </section>
 
       <footer>

@@ -12,7 +12,7 @@ Accessibility is a project requirement from the beginning, not a final review st
 - Use readable text sizes, responsive layouts, and content that supports browser zoom.
 - Label controls, status, and changes in state clearly for assistive technology.
 - Respect reduced-motion preferences if motion is introduced later.
-- Write plain, direct content and avoid requiring financial jargon where simpler wording is available.
+- Write plain, direct content and avoid requiring domain jargon where simpler wording is available.
 
 ## Future prototype checks
 
@@ -21,6 +21,10 @@ Accessibility is a project requirement from the beginning, not a final review st
 - [ ] Contrast and zoom checks.
 - [ ] Error and uncertainty messaging review.
 - [ ] Participant feedback about comprehension and control.
+
+## Core study implementation
+
+The participant flow uses semantic fieldsets, legends, radio controls, required numeric confidence input, visible focus, progress text, announced errors, and responsive comparison cards. It supports keyboard completion and does not rely on hover, color alone, countdowns, or animation.
 
 ## TODO
 

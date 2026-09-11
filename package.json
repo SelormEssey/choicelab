@@ -10,7 +10,9 @@
     "dev": "npm run dev --workspace=@choicelab/web",
     "build": "npm run build --workspace=@choicelab/web",
     "start": "npm run start --workspace=@choicelab/web",
-    "typecheck": "npm run typecheck --workspace=@choicelab/web"
+    "typecheck": "npm run typecheck --workspace=@choicelab/web",
+    "lint": "npm run lint --workspace=@choicelab/web",
+    "format:check": "prettier --check apps/web package.json package-lock.json README.md docs"
   },
   "engines": {
     "node": ">=20.9.0"
