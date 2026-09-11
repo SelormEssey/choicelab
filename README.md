@@ -69,7 +69,15 @@ Requirements: Python 3.10 or newer.
     pip install -r requirements.txt
     uvicorn main:app --reload
 
-The API preserves `GET /health` and `GET /v1/project-status`. Study routes live under `/v1/study/`. The local aggregate-only researcher summary is available at `GET /v1/study/researcher-summary`; it is not part of participant navigation.
+The API preserves `GET /health` and `GET /v1/project-status`. Study routes live under `/v1/study/`.
+
+### Researcher summary configuration
+
+`GET /v1/study/researcher-summary` is disabled by default and remains excluded from OpenAPI documentation. It returns a 404 unless a local researcher explicitly enables it before starting the API:
+
+    CHOICELAB_ENABLE_RESEARCHER_SUMMARY=true uvicorn main:app --reload
+
+Recognized enabled values are `1`, `true`, `yes`, and `on`, case-insensitively. All other values, including an unset value, leave the endpoint unavailable. When enabled, it returns aggregate counts only; it is not intended as a public production endpoint.
 
 ## Roadmap
 
