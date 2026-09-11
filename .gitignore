@@ -11,6 +11,10 @@ __pycache__/
 .venv/
 venv/
 .pytest_cache/
+apps/api/data/
+.ruff_cache/
+playwright-report/
+test-results/
 
 # Environment and editor files
 .env

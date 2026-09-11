@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ChoiceLab | Financial decision support research",
+  title: "ChoiceLab | Human-AI decision research",
   description:
-    "Exploring how intelligent financial interfaces can support human judgment without taking over decisions.",
+    "Exploring how recommendations, explanations, and confidence cues affect human decision-making and reliance.",
   icons: {
     icon: "/favicon.svg",
   },
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body>{children}</body>
     </html>
   );

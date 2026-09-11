@@ -6,7 +6,7 @@ No evaluation has been conducted. This document describes a planning direction t
 
 ## Intended comparison
 
-ChoiceLab may compare a reflection-first interaction condition with a recommendation-first interaction condition in a bounded financial decision scenario. The conditions, materials, measures, and analysis plan are not yet finalized.
+ChoiceLab currently implements a four-condition comparison of scenario-only, recommendation, explanation, and confidence-cue interfaces using fictional resource-selection scenarios. The implementation is a research prototype, and no evaluation has been conducted.
 
 ## Candidate outcomes
 

@@ -2,27 +2,27 @@
 
 ## Working framing
 
-ChoiceLab concerns financial decision-support interfaces that may use intelligent assistance. These interfaces can shape decisions through the information they surface, the choices they frame, and the confidence they imply.
+ChoiceLab concerns human-AI decision-support interfaces. These interfaces can shape decisions through the information they surface, the choices they frame, and the confidence they imply.
 
 This project is interested in a possible tension: recommendation-oriented interfaces may reduce effort in some moments, while people may also need support understanding assumptions, possible consequences, and tradeoffs before they decide. This is a research framing, not a conclusion about all users or systems.
 
 ## Scope
 
-The initial scope is personal financial decision-making in situations where a person must weigh competing priorities and retain responsibility for the outcome. The precise decision context will be selected after formative research and feasibility review.
+The current scope is a controlled online study of fictional software and resource-selection decisions. Participants retain responsibility for their choices while encountering one of four experimentally assigned assistance conditions.
 
 Out of scope for the foundation phase:
 
-- financial advice or individualized recommendations
-- financial account aggregation or transaction storage
-- automated decisions or execution of financial actions
-- claims about the effectiveness of a particular interaction pattern
+- real-world advice or individualized recommendations
+- collection of accounts, transactions, or other personal records
+- automated execution of a participant's decisions
+- claims beyond the controlled fictional scenarios and study sample
 
 ## Questions to investigate
 
-- Which financial decisions do prospective participants describe as difficult, ambiguous, or high effort?
-- What information, uncertainty, or tradeoffs do they want to understand before deciding?
-- How do existing tools influence their sense of control, confidence, and responsibility?
-- When is a direct recommendation helpful, and when does it feel premature or opaque?
+- How do recommendations, explanations, and confidence cues shape choices in comparable fictional scenarios?
+- When does an aid improve calibrated reliance, and when does it invite over-reliance or rejection?
+- How do people report confidence, trust, and perceived agency after a decision-aid interaction?
+- How do response time and accuracy differ across the four assigned conditions?
 
 ## Evidence plan
 
@@ -30,7 +30,7 @@ The project will document formative methods, sampling approach, data handling, a
 
 ## TODO
 
-- [ ] Define the initial decision context based on a documented rationale.
+- [x] Define and version the fictional decision context and trials.
 - [ ] Review relevant HCI and decision-support literature.
 - [ ] Record the framing changes that follow formative research.
 - [ ] Add sources and annotations after the literature review.

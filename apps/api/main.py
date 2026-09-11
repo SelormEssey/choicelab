@@ -8,6 +8,8 @@ or decision logic.
 from fastapi import FastAPI
 from pydantic import BaseModel
 
+from study.routes import router as study_router
+
 
 class ProjectStatus(BaseModel):
     name: str
@@ -20,6 +22,7 @@ app = FastAPI(
     version="0.1.0",
     description="Research foundation API for ChoiceLab.",
 )
+app.include_router(study_router)
 
 
 @app.get("/health", tags=["system"])
@@ -34,5 +37,5 @@ def project_status() -> ProjectStatus:
     return ProjectStatus(
         name="ChoiceLab",
         phase="Research & Development",
-        message="Decision-support features are intentionally not available yet.",
+        message="Core study prototype is available locally with fictional controlled decision scenarios.",
     )

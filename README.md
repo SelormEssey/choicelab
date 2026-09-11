@@ -1,37 +1,52 @@
 # ChoiceLab
 
-ChoiceLab is a Human-Computer Interaction project exploring how intelligent financial interfaces can support human decision-making without replacing human judgment.
+ChoiceLab is a Human-Computer Interaction research platform for studying how AI recommendations, explanations, and confidence cues influence human decision-making and reliance.
 
-The project is in an early research and development phase. It does not provide financial advice, recommendations, account connections, or automated decisions.
+The core study is a local research prototype. It uses fictional software and resource-selection decisions, controlled experimental stimuli, anonymous sessions, and no external AI service.
 
 ## Project focus
 
-Many financial tools are designed to produce an answer quickly. ChoiceLab investigates another interaction direction: helping people examine the assumptions, consequences, and tradeoffs that shape a decision before they act.
+Decision aids can influence what people select, trust, and rely on. ChoiceLab tests information presentation while keeping every scenario fictional and low risk.
 
 The current provisional research question is:
 
-> How does reflection-first intelligent assistance affect users' understanding, perceived agency, and trust compared with recommendation-first assistance during financial decision-making?
+> How do AI recommendations, explanations, and confidence cues affect human decision-making and reliance?
 
-This question is provisional. It will be refined through formative research before evaluative claims or product decisions are made.
+No participants, findings, or statistical claims are represented in this repository.
+
+## Core study
+
+Participant flow: landing page → study introduction → consent → ten trials → post-study questionnaire → debrief. Participants may stop at any time; stopping permanently ends the session before debriefing.
+
+The backend assigns one of four conditions: `CONTROL`, `AI_RECOMMENDATION`, `AI_EXPLANATION`, or `AI_CONFIDENCE`. Five recommendations per schedule are correct and five are intentionally incorrect. The browser never receives answer keys or recommendation-correctness fields before a response is saved.
+
+```text
+Next.js participant interface → FastAPI study service → SQLite
+                               ↓
+                 controlled, versioned study fixtures
+```
+
+SQLite is local, backend-owned prototype storage. Its repository boundary is designed for a later PostgreSQL replacement. The system requests no identity or contact data, does not use tracking, and does not call a live AI API.
 
 ## Project status
 
-| Area | Current focus |
-| --- | --- |
-| Research | Define the problem space, conduct formative research, and refine the research question. |
-| Design | Turn research insights into traceable design requirements and interaction concepts. |
-| Development | Establish a minimal web and API foundation. No decision-support experience is implemented. |
-| Evaluation | Plan a comparative study after a research-grounded prototype is available. |
+| Area        | Current focus                                                                    |
+| ----------- | -------------------------------------------------------------------------------- |
+| Research    | Controlled human-AI reliance study protocol and data dictionary.                 |
+| Design      | Accessible participant decision flow with restrained condition presentation.     |
+| Development | Next.js participant experience, FastAPI study API, and local SQLite persistence. |
+| Evaluation  | Analysis-ready response data. Formal evaluation remains future work.             |
 
 ## Repository structure
 
     apps/
-      web/                 Next.js research landing page
-      api/                 FastAPI project metadata service
-    docs/
-      research/            Research framing and study preparation
-      design/              Design requirements and accessibility guidance
-      evaluation/          Evaluation planning
+
+web/ Next.js landing page and participant study routes
+api/ FastAPI study service and SQLite repository boundary
+docs/
+research/ Study protocol, data dictionary, and research framing
+design/ Design requirements and accessibility guidance
+evaluation/ Evaluation planning
 
 ## Local development
 
@@ -54,14 +69,22 @@ Requirements: Python 3.10 or newer.
     pip install -r requirements.txt
     uvicorn main:app --reload
 
-The API exposes `GET /health` and `GET /v1/project-status`. These endpoints are intentionally limited to non-sensitive project metadata.
+The API preserves `GET /health` and `GET /v1/project-status`. Study routes live under `/v1/study/`.
+
+### Researcher summary configuration
+
+`GET /v1/study/researcher-summary` is disabled by default and remains excluded from OpenAPI documentation. It returns a 404 unless a local researcher explicitly enables it before starting the API:
+
+    CHOICELAB_ENABLE_RESEARCHER_SUMMARY=true uvicorn main:app --reload
+
+Recognized enabled values are `1`, `true`, `yes`, and `on`, case-insensitively. All other values, including an unset value, leave the endpoint unavailable. When enabled, it returns aggregate counts only; it is not intended as a public production endpoint.
 
 ## Roadmap
 
-1. Conduct formative research and document methods, decisions, and limitations.
-2. Refine the research question and derive evidence-backed design requirements.
-3. Prototype recommendation-first and reflection-first conditions.
-4. Conduct a planned comparative evaluation.
+1. Pilot the controlled study materials with an approved protocol.
+2. Review accessibility with relevant assistive technologies.
+3. Prepare PostgreSQL deployment only if the study scope requires it.
+4. Conduct a documented evaluation.
 5. Report findings, limitations, and design iterations responsibly.
 
 ## Research integrity

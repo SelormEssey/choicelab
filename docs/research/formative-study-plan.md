@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The formative study will help ChoiceLab understand how people approach a bounded financial decision context and what they need from decision-support interfaces. It is not intended to test the effectiveness of a design before that design exists.
+The formative study will help ChoiceLab understand how people approach bounded decision-support tasks and what they need from decision-aid interfaces. It is separate from the current controlled core study and is not intended to test effectiveness claims before an appropriate protocol exists.
 
 ## Study status
 
@@ -23,7 +23,7 @@ The exact method will be finalized after literature review, ethics review, and f
 
 - Define eligibility and recruitment criteria without overclaiming representativeness.
 - Prepare informed consent and a withdrawal process appropriate to institutional requirements.
-- Avoid requesting account credentials, transaction histories, or unnecessary sensitive financial details.
+- Avoid requesting credentials, personal records, or unnecessary sensitive details.
 - Create a data management plan before collection.
 - Determine whether institutional ethics review or faculty approval is required.
 
