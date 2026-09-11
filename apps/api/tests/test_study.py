@@ -57,6 +57,48 @@ def test_existing_endpoints(client: TestClient) -> None:
     assert client.get("/v1/project-status").status_code == 200
 
 
+@pytest.mark.parametrize("value", [None, "", "false", "0", "off", "no", "unexpected"])
+def test_researcher_summary_is_disabled_without_explicit_true_value(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch, value: str | None
+) -> None:
+    if value is None:
+        monkeypatch.delenv("CHOICELAB_ENABLE_RESEARCHER_SUMMARY", raising=False)
+    else:
+        monkeypatch.setenv("CHOICELAB_ENABLE_RESEARCHER_SUMMARY", value)
+
+    response = client.get("/v1/study/researcher-summary")
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Not found"}
+
+
+@pytest.mark.parametrize("value", ["true", "TRUE", "True", "1", "yes", "on"])
+def test_researcher_summary_requires_explicit_true_value_and_remains_aggregate_only(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch, value: str
+) -> None:
+    monkeypatch.setenv("CHOICELAB_ENABLE_RESEARCHER_SUMMARY", value)
+    session_id = create_session(client)
+
+    response = client.get("/v1/study/researcher-summary")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert set(body) == {
+        "study_version",
+        "total_sessions",
+        "completed_sessions",
+        "stopped_sessions",
+        "total_trial_responses",
+        "sessions_by_condition",
+    }
+    assert body["total_sessions"] == 1
+    assert body["sessions_by_condition"]["AI_RECOMMENDATION"] == 1
+    serialized = str(body)
+    assert session_id not in serialized
+    for field in ("participant", "reasoning", "response_time", "timestamp", "ip"):
+        assert field not in serialized.lower()
+
+
 def test_consent_and_client_condition_are_required(client: TestClient) -> None:
     assert client.post("/v1/study/sessions", json={"consent": False}).status_code == 422
     assert (

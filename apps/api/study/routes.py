@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from .schemas import (
     ConsentRequest,
@@ -15,6 +15,7 @@ from .schemas import (
     TrialView,
 )
 from .service import StudyService
+from .settings import researcher_summary_enabled
 
 router = APIRouter(prefix="/v1/study", tags=["study"])
 
@@ -82,4 +83,6 @@ def get_debrief(session_id: str, service: StudyService = Depends(get_service)) -
 
 @router.get("/researcher-summary", response_model=ResearcherSummary, include_in_schema=False)
 def researcher_summary(service: StudyService = Depends(get_service)) -> ResearcherSummary:
+    if not researcher_summary_enabled():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
     return service.researcher_summary()
