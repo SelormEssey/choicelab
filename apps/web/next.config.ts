@@ -4,7 +4,8 @@ const nextConfig: NextConfig = {
   agentRules: false,
   reactStrictMode: true,
   async rewrites() {
-    return [{ source: "/api/:path*", destination: "http://127.0.0.1:8000/v1/:path*" }];
+    const apiOrigin = process.env.CHOICELAB_API_URL ?? "http://127.0.0.1:8000";
+    return [{ source: "/api/:path*", destination: `${apiOrigin}/v1/:path*` }];
   },
 };
 

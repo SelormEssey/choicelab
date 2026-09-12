@@ -18,6 +18,7 @@ class ConsentRequest(StrictModel):
 
 class SessionCreated(StrictModel):
     session_id: str
+    session_token: str
     anonymous_participant_id: str
     status: SessionStatus
     study_version: str

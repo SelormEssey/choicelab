@@ -4,6 +4,7 @@ import json
 import secrets
 import sqlite3
 from datetime import UTC, datetime
+from hashlib import sha256
 from pathlib import Path
 
 from fastapi import HTTPException, status
@@ -52,6 +53,16 @@ class StudyService:
             raise fail(status.HTTP_404_NOT_FOUND, "Study session was not found.")
         return row
 
+    def authorize(self, session_id: str, token: str | None) -> None:
+        if not token:
+            raise fail(status.HTTP_401_UNAUTHORIZED, "A session token is required.")
+        with self._connection() as connection:
+            session = self._session(connection, session_id)
+            expected = session["access_token_hash"]
+            supplied = sha256(token.encode("utf-8")).hexdigest()
+            if not expected or not secrets.compare_digest(expected, supplied):
+                raise fail(status.HTTP_403_FORBIDDEN, "The session token is invalid.")
+
     def _choose_condition_and_schedule(self, connection: sqlite3.Connection) -> tuple[Condition, str]:
         condition_rows = connection.execute(
             "SELECT condition, COUNT(*) AS count FROM study_sessions WHERE study_version = ? GROUP BY condition",
@@ -74,6 +85,8 @@ class StudyService:
 
     def create_session(self) -> SessionCreated:
         session_id = f"ses_{secrets.token_urlsafe(18)}"
+        session_token = secrets.token_urlsafe(32)
+        access_token_hash = sha256(session_token.encode("utf-8")).hexdigest()
         participant_id = f"P-{secrets.token_hex(4).upper()}"
         timestamp = now()
         with self._connection() as connection:
@@ -81,10 +94,12 @@ class StudyService:
             condition, schedule = self._choose_condition_and_schedule(connection)
             connection.execute(
                 """INSERT INTO study_sessions
-                (id, anonymous_participant_id, condition, schedule_id, status, study_version, fixture_checksum,
-                 consent_version, consented_at, started_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (id, access_token_hash, anonymous_participant_id, condition, schedule_id, status, study_version,
+                 fixture_checksum, consent_version, consented_at, started_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     session_id,
+                    access_token_hash,
                     participant_id,
                     condition.value,
                     schedule,
@@ -121,6 +136,7 @@ class StudyService:
             connection.commit()
         return SessionCreated(
             session_id=session_id,
+            session_token=session_token,
             anonymous_participant_id=participant_id,
             status=SessionStatus.IN_PROGRESS,
             study_version=STUDY_VERSION,

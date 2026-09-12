@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 export function StudyShell({ children }: { children: ReactNode }) {
+  const demoMode = process.env.NEXT_PUBLIC_CHOICELAB_DEMO_MODE === "true";
   return (
     <main className="study-shell">
       <header className="study-header">
@@ -13,6 +14,12 @@ export function StudyShell({ children }: { children: ReactNode }) {
         </Link>
         <span className="study-label">Human-AI decision study</span>
       </header>
+      {demoMode && (
+        <p className="demo-notice" role="note">
+          Public demonstration only. Submissions are disposable product-test records and are not
+          research data.
+        </p>
+      )}
       {children}
     </main>
   );
