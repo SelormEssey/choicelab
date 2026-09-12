@@ -8,7 +8,7 @@ test("participant can complete the study and reach the debrief", async ({ page }
   await page.getByRole("button", { name: "I agree to participate" }).click();
 
   for (let decision = 1; decision <= 10; decision += 1) {
-    await expect(page.getByText(`Decision ${decision} of 10`)).toBeVisible();
+    await expect(page.getByRole("progressbar")).toHaveAttribute("value", String(decision));
     await page.locator('.decision-form input[type="radio"]').first().check();
     await page.getByLabel("How confident are you in your choice?").fill("50");
     await page.getByRole("button", { name: "Continue" }).click();
@@ -33,5 +33,5 @@ test("a session URL cannot be resumed without its browser token", async ({ page,
   const { session_id: sessionId } = await created.json();
 
   await page.goto(`/study/session/${sessionId}`);
-  await expect(page.getByRole("alert")).toContainText("session token is required");
+  await expect(page.locator("p.study-error")).toContainText("session token is required");
 });
