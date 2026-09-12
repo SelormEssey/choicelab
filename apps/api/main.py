@@ -1,9 +1,4 @@
-"""ChoiceLab API.
-
-The API is intentionally small during the research foundation phase.
-It exposes project metadata only and contains no recommendations, account data,
-or decision logic.
-"""
+"""ChoiceLab study API and controlled experiment service."""
 
 from fastapi import FastAPI
 from pydantic import BaseModel

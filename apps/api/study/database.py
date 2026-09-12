@@ -9,7 +9,7 @@ DEFAULT_DATABASE_PATH = Path(__file__).resolve().parents[1] / "data" / "choicela
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS schema_versions (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS study_sessions (
-  id TEXT PRIMARY KEY, anonymous_participant_id TEXT NOT NULL UNIQUE, condition TEXT NOT NULL,
+  id TEXT PRIMARY KEY, access_token_hash TEXT NOT NULL, anonymous_participant_id TEXT NOT NULL UNIQUE, condition TEXT NOT NULL,
   schedule_id TEXT NOT NULL, status TEXT NOT NULL, study_version TEXT NOT NULL,
   fixture_checksum TEXT NOT NULL, consent_version TEXT NOT NULL, consented_at TEXT NOT NULL,
   started_at TEXT NOT NULL, completed_at TEXT, current_trial_index INTEGER NOT NULL DEFAULT 0
@@ -59,6 +59,11 @@ def connect(path: Path | None = None) -> sqlite3.Connection:
 def initialize(path: Path | None = None) -> None:
     with connect(path) as connection:
         connection.executescript(SCHEMA)
+        columns = {
+            row["name"] for row in connection.execute("PRAGMA table_info(study_sessions)").fetchall()
+        }
+        if "access_token_hash" not in columns:
+            connection.execute("ALTER TABLE study_sessions ADD COLUMN access_token_hash TEXT")
         connection.execute(
             "INSERT OR IGNORE INTO schema_versions(version, applied_at) VALUES (1, datetime('now'))"
         )

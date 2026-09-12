@@ -29,7 +29,29 @@ def client(service: StudyService) -> TestClient:
 def create_session(client: TestClient) -> str:
     response = client.post("/v1/study/sessions", json={"consent": True})
     assert response.status_code == 201
+    client.headers["X-Session-Token"] = response.json()["session_token"]
     return response.json()["session_id"]
+
+
+def test_session_routes_require_the_generated_access_token(client: TestClient) -> None:
+    response = client.post("/v1/study/sessions", json={"consent": True})
+    session_id = response.json()["session_id"]
+
+    assert client.get(f"/v1/study/sessions/{session_id}").status_code == 401
+    assert (
+        client.get(
+            f"/v1/study/sessions/{session_id}",
+            headers={"X-Session-Token": "not-the-generated-session-token"},
+        ).status_code
+        == 403
+    )
+    assert (
+        client.get(
+            f"/v1/study/sessions/{session_id}",
+            headers={"X-Session-Token": response.json()["session_token"]},
+        ).status_code
+        == 200
+    )
 
 
 def respond_to_current_trial(client: TestClient, session_id: str, selected: str | None = None) -> dict:
@@ -77,9 +99,13 @@ def test_researcher_summary_requires_explicit_true_value_and_remains_aggregate_o
     client: TestClient, monkeypatch: pytest.MonkeyPatch, value: str
 ) -> None:
     monkeypatch.setenv("CHOICELAB_ENABLE_RESEARCHER_SUMMARY", value)
+    monkeypatch.setenv("CHOICELAB_RESEARCHER_TOKEN", "local-researcher-token")
     session_id = create_session(client)
 
-    response = client.get("/v1/study/researcher-summary")
+    response = client.get(
+        "/v1/study/researcher-summary",
+        headers={"X-Researcher-Token": "local-researcher-token"},
+    )
 
     assert response.status_code == 200
     body = response.json()
@@ -97,6 +123,22 @@ def test_researcher_summary_requires_explicit_true_value_and_remains_aggregate_o
     assert session_id not in serialized
     for field in ("participant", "reasoning", "response_time", "timestamp", "ip"):
         assert field not in serialized.lower()
+
+
+def test_researcher_summary_rejects_missing_or_incorrect_token(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("CHOICELAB_ENABLE_RESEARCHER_SUMMARY", "true")
+    monkeypatch.setenv("CHOICELAB_RESEARCHER_TOKEN", "expected-researcher-token")
+
+    assert client.get("/v1/study/researcher-summary").status_code == 404
+    assert (
+        client.get(
+            "/v1/study/researcher-summary",
+            headers={"X-Researcher-Token": "incorrect-researcher-token"},
+        ).status_code
+        == 404
+    )
 
 
 def test_consent_and_client_condition_are_required(client: TestClient) -> None:

@@ -12,6 +12,7 @@
     "start": "npm run start --workspace=@choicelab/web",
     "typecheck": "npm run typecheck --workspace=@choicelab/web",
     "lint": "npm run lint --workspace=@choicelab/web",
+    "test:e2e": "playwright test",
     "format:check": "prettier --check apps/web package.json package-lock.json README.md docs"
   },
   "engines": {

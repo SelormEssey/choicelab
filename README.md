@@ -1,5 +1,7 @@
 # ChoiceLab
 
+[![Quality](https://github.com/SelormEssey/choicelab/actions/workflows/quality.yml/badge.svg)](https://github.com/SelormEssey/choicelab/actions/workflows/quality.yml)
+
 ChoiceLab is a Human-Computer Interaction research platform for studying how AI recommendations, explanations, and confidence cues influence human decision-making and reliance.
 
 It is a controlled human-AI interaction prototype: participants complete fictional, low-risk decision tasks while the backend manages experimental assignment, stimuli, scoring, and anonymous study records. It is not a deployed research study and this repository contains no participant data, findings, or statistical claims.
@@ -49,6 +51,7 @@ The browser receives the trial data needed to make a choice, but not answer keys
 - Answer keys and recommendation-correctness fields are redacted from trial responses sent to the browser.
 - Idempotency keys make response retries safe and prevent duplicate trial advancement.
 - Anonymous session records avoid names, contact details, IP addresses, and demographic identity fields.
+- A generated browser-held token protects each session; the session URL alone cannot read or change it.
 - Versioned fixtures and complementary schedules keep experimental stimuli deterministic and balanced.
 - Researcher summary access is explicitly gated and unavailable by default.
 - Semantic controls, visible focus, responsive layouts, and non-color-only cues support accessible participation.
@@ -108,19 +111,53 @@ uvicorn main:app --reload
 
 The API exposes `GET /health` and `GET /v1/project-status`. Study routes live under `/v1/study/`.
 
-## Researcher Summary Configuration
+## Automated Verification
 
-`GET /v1/study/researcher-summary` is disabled by default and excluded from OpenAPI documentation. It returns a 404 unless a local researcher explicitly enables it before starting the API:
+The quality workflow runs on every pull request and push to `main`. It checks:
+
+- Ruff and 26 API tests
+- ESLint, TypeScript, and the production Next.js build
+- two Playwright browser tests, including the full consent-to-debrief journey
+
+Run the same checks locally:
 
 ```bash
-CHOICELAB_ENABLE_RESEARCHER_SUMMARY=true uvicorn main:app --reload
+cd apps/api && pytest -q && ruff check . && cd ../..
+npm run lint
+npm run typecheck
+npm run build
+npm run test:e2e
 ```
 
-Recognized enabled values are `1`, `true`, `yes`, and `on`, case-insensitively. All other values, including an unset value, leave the endpoint unavailable. When enabled, it returns aggregate counts only and is not intended as a public production endpoint.
+## Demo Deployment
+
+ChoiceLab includes Dockerfiles and a Compose configuration for a clearly labeled demonstration:
+
+```bash
+docker compose up --build
+```
+
+Open `http://localhost:3000`. The web service uses `CHOICELAB_API_URL` for its server-side API proxy. Set `NEXT_PUBLIC_CHOICELAB_DEMO_MODE=true` on public demonstrations so visitors are told that submissions are disposable product-test records, not research data.
+
+Do not enable the researcher summary on a public deployment. A production research study also requires an approved protocol, a retention policy, protected researcher access, and infrastructure appropriate to the study scope.
+
+## Researcher Summary Configuration
+
+`GET /v1/study/researcher-summary` is disabled by default and excluded from OpenAPI documentation. It returns a 404 unless a researcher explicitly enables it and supplies the configured access token:
+
+```bash
+CHOICELAB_ENABLE_RESEARCHER_SUMMARY=true \
+CHOICELAB_RESEARCHER_TOKEN="replace-with-a-long-random-secret" \
+uvicorn main:app --reload
+```
+
+Send the secret in the `X-Researcher-Token` header. Recognized enabled values are `1`, `true`, `yes`, and `on`, case-insensitively. All other values, including an unset value, leave the endpoint unavailable. When enabled and authorized, it returns aggregate counts only.
 
 ## Research Integrity
 
 ChoiceLab will not represent assumptions as evidence. The repository does not contain fabricated participants, interview responses, survey data, usability results, or personas. Research findings will be added only when they are collected, analyzed, and documented.
+
+The current [heuristic evaluation](docs/evaluation/heuristic-evaluation.md) is an expert interface review, not a participant study. It records the review method, observations, fixes, remaining risks, and limitations.
 
 ## Roadmap
 
